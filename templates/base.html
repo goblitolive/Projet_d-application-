@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application de Chiffrement</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo center">Chiffrement App</a>
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/encrypt">Chiffrement</a></li>
+                <li><a href="/decrypt">Déchiffrement</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="background-container">
+        <div class="background-overlay"></div>
+        <div class="background-images">
+            <img src="{{ url_for('static', filename='hacker.png') }}" class="background-image hacker-image">
+            <img src="{{ url_for('static', filename='ghost.png') }}" class="background-image ghost-image">
+        </div>
+    </div>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

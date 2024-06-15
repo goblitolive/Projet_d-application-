@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+    <h1 class="center-align white-text">Chiffrement de Mot de Passe</h1>
+    <div class="row">
+        <form class="col s12" method="post">
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="password" type="text" class="validate" name="password" required>
+                    <label for="password">Mot de passe</label>
+                </div>
+            </div>
+            <button type="submit" class="btn waves-effect waves-light">Chiffrer</button>
+        </form>
+    </div>
+    {% if hashed_password %}
+    <div class="card-panel teal lighten-4">
+        <h4>Mot de passe chiffré :</h4>
+        <p>{{ hashed_password }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
