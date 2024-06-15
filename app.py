@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.security import check_password_hash
 import random
+from collections import Counter
 
 app = Flask(__name__)
 
@@ -32,6 +33,39 @@ def chiffrer(text):
 
     return ''.join(N)
 
+FRENCH_LETTER_FREQUENCIES = {
+    'e': 14.7, 'a': 7.6, 'i': 7.5, 's': 7.9, 'n': 7.1, 'r': 6.6, 't': 7.0, 'o': 5.8, 'l': 5.5, 'u': 6.3,
+    'd': 3.7, 'c': 3.2, 'm': 2.4, 'p': 3.0, 'v': 1.5, 'q': 1.2, 'f': 1.0, 'b': 1.1, 'g': 1.1, 'j': 0.6,
+    'x': 0.4, 'y': 0.4, 'z': 0.3, 'h': 1.1, 'k': 0.05, 'w': 0.05, ' ': 18.0, '.': 2.0
+}
+
+def dechiffrer(ciphertext):
+    # Convertir tout le texte en minuscules pour correspondre à nos fréquences
+    ciphertext = ciphertext.lower()
+
+    # Calculer les fréquences des lettres dans le texte chiffré
+    letter_counts = Counter(ciphertext)
+    total_letters = sum(letter_counts.values())
+    
+    # Calculer les fréquences en pourcentage
+    cipher_frequencies = {char: (count / total_letters) * 100 for char, count in letter_counts.items()}
+    
+    # Trier les lettres par fréquence dans le texte chiffré
+    sorted_cipher_chars = sorted(cipher_frequencies, key=cipher_frequencies.get, reverse=True)
+    
+    # Trier les lettres par fréquence en français
+    sorted_french_chars = sorted(FRENCH_LETTER_FREQUENCIES, key=FRENCH_LETTER_FREQUENCIES.get, reverse=True)
+    
+    # Créer un mapping du texte chiffré vers le français basé sur les fréquences
+    char_map = {}
+    for cipher_char, french_char in zip(sorted_cipher_chars, sorted_french_chars):
+        char_map[cipher_char] = french_char
+
+    # Déchiffrer le texte
+    decrypted_text = ''.join(char_map.get(char, char) for char in ciphertext)
+    
+    return decrypted_text
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -47,10 +81,9 @@ def encrypt():
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt():
     if request.method == 'POST':
-        password = request.form['password']
         hashed_password = request.form['hashed_password']
-        password_match = check_password_hash(hashed_password, password)
-        return render_template('decrypt.html', password_match=password_match)
+        decrypted_password = dechiffrer(hashed_password)
+        return render_template('decrypt.html', decrypted_password=decrypted_password)
     return render_template('decrypt.html')
 
 if __name__ == '__main__':
