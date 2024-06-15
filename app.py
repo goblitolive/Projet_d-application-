@@ -1,22 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 import random
+
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/encrypt', methods=['GET', 'POST'])
-def encrypt():
-    if request.method == 'POST':
-        password = request.form['password']
-        hashed_password = generate_password_hash(password)
-        return render_template('encrypt.html', hashed_password=hashed_password)
-    return render_template('encrypt.html')
-
-def cheffre(): 
-    text = input("ktb text dyalk  : ").lower()  # Convertir tout le texte en minuscules
+def chiffrer(text): 
+    text = text.lower()  # Convertir tout le texte en minuscules
     L = []
     N = []
     tab = list('abcdefghijklmnopqrstuvwxyz .')  # Alphabet en minuscules
@@ -25,7 +14,6 @@ def cheffre():
     # Ajouter chaque caractère du texte dans le tableau L
     for i in text:
         L.append(i)
-    print("L =", L)
 
     # Remplacer chaque caractère de L par un caractère aléatoire de tab
     for j in range(len(L)):
@@ -42,11 +30,19 @@ def cheffre():
         else:
             N.append(sauvgarde[L[j]])
 
-    print("N =", N)
+    return ''.join(N)
 
-cheffre()
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-
+@app.route('/encrypt', methods=['GET', 'POST'])
+def encrypt():
+    if request.method == 'POST':
+        password = request.form['password']
+        hashed_password = chiffrer(password)
+        return render_template('encrypt.html', hashed_password=hashed_password)
+    return render_template('encrypt.html')
 
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt():
