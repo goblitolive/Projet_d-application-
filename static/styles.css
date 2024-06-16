@@ -15,7 +15,7 @@ nav {
     padding: 20px;
     border-radius: 8px;
     background-color: #424242 !important;
-    color: white;
+    color: white; /* Ensure the text color is white */
 }
 
 .input-field input[type=text]:focus + label,
