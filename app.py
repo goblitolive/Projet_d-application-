@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, request, redirect, url_for
-from werkzeug.security import check_password_hash
+from flask import Flask, render_template, request
 import random
 from collections import Counter
 
@@ -13,6 +12,7 @@ def chiffrer(text):
     N = []
     tab = list('abcdefghijklmnopqrstuvwxyz .')  # Alphabet en minuscules
     sauvgarde = {}
+    frequency = Counter(text)
 
     # Ajouter chaque caractère du texte dans le tableau L
     for i in text:
@@ -33,35 +33,27 @@ def chiffrer(text):
         else:
             N.append(sauvgarde[L[j]])
 
-    return ''.join(N)
+    formatted_frequency = ', '.join(['{}:{}'.format(char, freq) for char, freq in frequency.items()])
+    return ''.join(N), formatted_frequency
 
-FRENCH_LETTER_FREQUENCIES = {
-    'e': 14.7, 'a': 7.6, 'i': 7.5, 's': 7.9, 'n': 7.1, 'r': 6.6, 't': 7.0, 'o': 5.8, 'l': 5.5, 'u': 6.3,
-    'd': 3.7, 'c': 3.2, 'm': 2.4, 'p': 3.0, 'v': 1.5, 'q': 1.2, 'f': 1.0, 'b': 1.1, 'g': 1.1, 'j': 0.6,
-    'x': 0.4, 'y': 0.4, 'z': 0.3, 'h': 1.1, 'k': 0.05, 'w': 0.05, ' ': 18.0, '.': 2.0
-}
-
-def dechiffrer(ciphertext):
+def dechiffrer(ciphertext, frequency):
     # Convertir tout le texte en minuscules pour correspondre à nos fréquences
     ciphertext = ciphertext.lower()
 
-    # Calculer les fréquences des lettres dans le texte chiffré
-    letter_counts = Counter(ciphertext)
-    total_letters = sum(letter_counts.values())
-    
-    # Calculer les fréquences en pourcentage
-    cipher_frequencies = {char: (count / total_letters) * 100 for char, count in letter_counts.items()}
+    # Convertir les fréquences en dictionnaire
+    frequency = dict(item.split(':') for item in frequency.split(','))
+    frequency = {char: int(freq) for char, freq in frequency.items()}
+
+    # Trier les lettres par fréquence dans le texte chiffré
+    sorted_cipher_chars = sorted(frequency, key=frequency.get, reverse=True)
     
     # Trier les lettres par fréquence dans le texte chiffré
-    sorted_cipher_chars = sorted(cipher_frequencies, key=cipher_frequencies.get, reverse=True)
-    
-    # Trier les lettres par fréquence en français
-    sorted_french_chars = sorted(FRENCH_LETTER_FREQUENCIES, key=FRENCH_LETTER_FREQUENCIES.get, reverse=True)
-    
-    # Créer un mapping du texte chiffré vers le français basé sur les fréquences
+    sorted_original_chars = sorted(frequency, key=frequency.get, reverse=True)
+
+    # Créer un mapping du texte chiffré vers le texte original basé sur les fréquences
     char_map = {}
-    for cipher_char, french_char in zip(sorted_cipher_chars, sorted_french_chars):
-        char_map[cipher_char] = french_char
+    for cipher_char, original_char in zip(sorted_cipher_chars, sorted_original_chars):
+        char_map[cipher_char] = original_char
 
     # Déchiffrer le texte
     decrypted_text = ''.join(char_map.get(char, char) for char in ciphertext)
@@ -76,18 +68,18 @@ def index():
 def encrypt():
     if request.method == 'POST':
         password = request.form['password']
-        hashed_password = chiffrer(password)
-        return render_template('encrypt.html', hashed_password=hashed_password)
+        hashed_password, frequency = chiffrer(password)
+        return render_template('encrypt.html', hashed_password=hashed_password, frequency=frequency)
     return render_template('encrypt.html')
 
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt():
     if request.method == 'POST':
         hashed_password = request.form['hashed_password']
-        decrypted_password = dechiffrer(hashed_password)
-        return render_template('decrypt.html', decrypted_password=decrypted_password)
+        frequency = request.form['frequency']
+        decrypted_password = dechiffrer(hashed_password, frequency)
+        return render_template('decrypt.html', decrypted_password=decrypted_password, frequency=frequency)
     return render_template('decrypt.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
