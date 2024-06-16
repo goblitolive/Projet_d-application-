@@ -7,12 +7,6 @@
         <form class="col s12" method="post">
             <div class="row">
                 <div class="input-field col s12">
-                    <input id="password" type="text" class="validate" name="password" required>
-                    <label for="password">Mot de passe</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
                     <input id="hashed_password" type="text" class="validate" name="hashed_password" required>
                     <label for="hashed_password">Mot de passe chiffré</label>
                 </div>
@@ -20,10 +14,10 @@
             <button type="submit" class="btn waves-effect waves-light">Déchiffrer</button>
         </form>
     </div>
-    {% if password_match is not none %}
+    {% if decrypted_password %}
     <div class="card-panel teal lighten-4">
-        <h4>Le mot de passe correspond :</h4>
-        <p>{{ 'Oui' if password_match else 'Non' }}</p>
+        <h4>Mot de passe déchiffré :</h4>
+        <p>{{ decrypted_password }}</p>
     </div>
     {% endif %}
 </div>
