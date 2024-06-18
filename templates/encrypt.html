@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="section">
-    <h1 class="center-align white-text">Chiffrement de Mot de Passe</h1>
+    <h1 class="center-align">Chiffrement de Mot de Passe</h1>
     <div class="row">
         <form class="col s12" method="post">
             <div class="row">
@@ -21,19 +21,11 @@
     </div>
     <div class="card-panel teal lighten-4">
         <h4>Fréquences des caractères :</h4>
-        <ul>
-            {% for char, freq in frequency.items() %}
-            <li>{{ char }}: {{ freq }}%</li>
-            {% endfor %}
-        </ul>
+        <p>{{ frequency }}</p>
     </div>
     <div class="card-panel teal lighten-4">
-        <h4>Bigrammes les plus fréquents :</h4>
-        <ul>
-            {% for ngram, freq in sorted_ngrams %}
-            <li>{{ ngram }}: {{ freq }}%</li>
-            {% endfor %}
-        </ul>
+        <h4>Clé de chiffrement :</h4>
+        <p>{{ substitution_key }}</p>
     </div>
     {% endif %}
 </div>
