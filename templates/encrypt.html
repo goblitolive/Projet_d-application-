@@ -23,7 +23,7 @@
         <h4>Fréquences des caractères :</h4>
         <ul>
             {% for char, freq in frequency.items() %}
-            <li>{{ char }}: {{ freq }}</li>
+            <li>{{ char }}: {{ freq }}%</li>
             {% endfor %}
         </ul>
     </div>
@@ -31,7 +31,7 @@
         <h4>Bigrammes les plus fréquents :</h4>
         <ul>
             {% for ngram, freq in sorted_ngrams %}
-            <li>{{ ngram }}: {{ freq }}</li>
+            <li>{{ ngram }}: {{ freq }}%</li>
             {% endfor %}
         </ul>
     </div>
