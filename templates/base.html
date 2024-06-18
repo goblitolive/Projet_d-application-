@@ -20,10 +20,10 @@
     </nav>
     <div class="background-container">
         <div class="background-overlay"></div>
-        <div class="background-images">
-            <img src="{{ url_for('static', filename='hacker.png') }}" class="background-image hacker-image">
-            <img src="{{ url_for('static', filename='ghost.png') }}" class="background-image ghost-image">
-        </div>
+        <video autoplay muted loop id="background-video">
+            <source src="{{ url_for('static', filename='backgroundvideo.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
     </div>
     <div class="container">
         {% block content %}{% endblock %}
