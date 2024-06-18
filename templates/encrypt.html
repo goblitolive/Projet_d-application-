@@ -21,7 +21,19 @@
     </div>
     <div class="card-panel teal lighten-4">
         <h4>Fréquences des caractères :</h4>
-        <p>{{ frequency }}</p>
+        <ul>
+            {% for char, freq in frequency.items() %}
+            <li>{{ char }}: {{ freq }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="card-panel teal lighten-4">
+        <h4>Bigrammes les plus fréquents :</h4>
+        <ul>
+            {% for ngram, freq in sorted_ngrams %}
+            <li>{{ ngram }}: {{ freq }}</li>
+            {% endfor %}
+        </ul>
     </div>
     {% endif %}
 </div>

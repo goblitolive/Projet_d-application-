@@ -10,10 +10,6 @@
                     <input id="hashed_password" type="text" class="validate" name="hashed_password" required>
                     <label for="hashed_password">Mot de passe chiffré</label>
                 </div>
-                <div class="input-field col s12">
-                    <textarea id="frequency" class="materialize-textarea" name="frequency" required></textarea>
-                    <label for="frequency">Fréquences des caractères (format: a:5, b:3, .:8,  :10)</label>
-                </div>
             </div>
             <button type="submit" class="btn waves-effect waves-light">Déchiffrer</button>
         </form>
@@ -22,10 +18,6 @@
     <div class="card-panel teal lighten-4 white-text">
         <h4>Mot de passe déchiffré :</h4>
         <p>{{ decrypted_password }}</p>
-    </div>
-    <div class="card-panel teal lighten-4 white-text">
-        <h4>Fréquences des caractères dans le texte chiffré :</h4>
-        <p>{{ frequency }}</p>
     </div>
     {% endif %}
 </div>
