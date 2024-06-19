@@ -40,7 +40,7 @@
             <h4>Message déchiffré :</h4>
             <p id="decryptedText">
                 {% for word in decrypted_password.split() %}
-                    <span class="word" style="cursor: pointer;">{{ word }}</span>
+                    <span class="word" style="cursor: pointer;" onclick="showOptions('{{ word }}')">{{ word }}</span>
                 {% endfor %}
             </p>
         </div>
@@ -50,21 +50,11 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Document loaded');
         const words = document.querySelectorAll('#decryptedText .word');
-        console.log('Words found:', words);
-
+        
         words.forEach(word => {
-            console.log('Adding event listener to:', word.innerText);
             word.addEventListener('click', function(event) {
-                console.log('Word clicked:', event.target.innerText);
-                
-                const rect = event.target.getBoundingClientRect();
-                const emptyBox = document.getElementById('emptyBox');
-                
-                emptyBox.style.top = `${rect.bottom + window.scrollY}px`;
-                emptyBox.style.left = `${rect.left + window.scrollX}px`;
-                emptyBox.style.display = 'block';
+                showOptions(event.target.innerText);
             });
         });
 
@@ -75,6 +65,32 @@
             }
         });
     });
+
+    function showOptions(word) {
+        fetch('/get_options', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ word: word }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const emptyBox = document.getElementById('emptyBox');
+            emptyBox.innerHTML = ''; // Clear previous options
+
+            data.options.forEach(option => {
+                const div = document.createElement('div');
+                div.textContent = option;
+                emptyBox.appendChild(div);
+            });
+
+            const rect = document.querySelector(`#decryptedText .word:first-child`).getBoundingClientRect();
+            emptyBox.style.top = `${rect.bottom + window.scrollY}px`;
+            emptyBox.style.left = `${rect.left + window.scrollX}px`;
+            emptyBox.style.display = 'block';
+        });
+    }
     </script>
 </body>
 </html>

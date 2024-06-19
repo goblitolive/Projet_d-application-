@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 import random
 from collections import Counter
+from decrypt import decrypt_text, generate_possible_mappings  # Importer les fonctions de decrypt.py
 
 app = Flask(__name__)
 
-# Fréquences des caractères en français
+# Définir les fréquences des caractères en français
 french_freq = {
     'e': 14.13, 'a': 7.18, 'i': 6.28, 's': 5.99, 't': 6.17, 'n': 5.52, 'r': 5.05, 'u': 5.20, 'l': 4.81, 'o': 4.18,
     'd': 2.82, 'm': 2.45, 'c': 2.52, 'p': 2.11, 'v': 1.61, 'q': 1.06, 'f': 0.93, 'b': 0.79, 'g': 0.72, 'h': 0.80,
@@ -41,25 +42,6 @@ def chiffrer(text):
     substitution_key = format_substitution_key(sauvegarde)
     return ''.join(encrypted_text), frequency_percentage, substitution_key
 
-def dechiffrer(ciphertext, known_frequency):
-    # Calculer les fréquences des caractères dans le texte chiffré
-    total_chars = len(ciphertext)
-    cipher_frequencies = Counter(ciphertext)
-    cipher_frequencies_percentage = {char: (freq / total_chars) * 100 for char, freq in cipher_frequencies.items()}
-
-    # Créer un mapping du texte chiffré vers le texte original basé sur les fréquences des caractères
-    sorted_cipher_chars = sorted(cipher_frequencies_percentage.items(), key=lambda item: item[1], reverse=True)
-    sorted_original_chars = sorted(known_frequency.items(), key=lambda item: item[1], reverse=True)
-
-    char_map = {}
-    for (cipher_char, _), (original_char, _) in zip(sorted_cipher_chars, sorted_original_chars):
-        char_map[cipher_char] = original_char
-
-    # Déchiffrer le texte avec le mapping
-    decrypted_text = ''.join(char_map.get(char, char) for char in ciphertext)
-
-    return decrypted_text
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -76,9 +58,23 @@ def encrypt():
 def decrypt():
     if request.method == 'POST':
         hashed_password = request.form['hashed_password']
-        decrypted_password = dechiffrer(hashed_password, french_freq)
+        decrypted_password = decrypt_text(hashed_password, french_freq)  # Utiliser la fonction de déchiffrement correcte
         return render_template('decrypt.html', decrypted_password=decrypted_password)
     return render_template('decrypt.html')
+
+@app.route('/get_options', methods=['POST'])
+def get_options():
+    data = request.get_json()
+    word = data['word']
+    
+    # Générer quatre propositions basées sur le mot cliqué
+    possible_mappings = generate_possible_mappings(word)
+    options = []
+    for char_map in possible_mappings:
+        decrypted_text = ''.join(char_map.get(char, char) for char in word)
+        options.append(decrypted_text)
+    
+    return jsonify({'options': options})
 
 if __name__ == '__main__':
     app.run(debug=True)
