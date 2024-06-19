@@ -109,3 +109,19 @@ h1 {
     max-height: 45px; /* Adjust size as necessary */
     vertical-align: middle; /* Align images with text */
 }
+.suggestions-box {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    padding: 10px;
+    z-index: 10;
+  }
+.suggestion {
+    cursor: pointer;
+    padding: 5px;
+  }
+.suggestion:hover {
+    background-color: #f0f0f0;
+  }
+

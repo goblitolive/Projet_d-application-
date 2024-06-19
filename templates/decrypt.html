@@ -1,24 +1,81 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="section">
-    <h1 class="center-align white-text">Déchiffrement de Message</h1>
-    <div class="row">
-        <form class="col s12" method="post">
-            <div class="row">
-                <div class="input-field col s12">
-                    <input id="hashed_password" type="text" class="validate" name="hashed_password" required>
-                    <label for="hashed_password">Message chiffré</label>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déchiffrement de Message</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <style>
+        .empty-box {
+            display: none;
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 1px solid black;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h1 class="center-align white-text">Déchiffrement de Message</h1>
+        <div class="row">
+            <form class="col s12" method="post">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="hashed_password" type="text" class="validate" name="hashed_password" required>
+                        <label for="hashed_password">Message chiffré</label>
+                    </div>
                 </div>
-            </div>
-            <button type="submit" class="btn waves-effect waves-light">Déchiffrer</button>
-        </form>
+                <button type="submit" class="btn waves-effect waves-light">Déchiffrer</button>
+            </form>
+        </div>
+        {% if decrypted_password %}
+        <div class="card-panel teal lighten-4 white-text">
+            <h4>Message déchiffré :</h4>
+            <p id="decryptedText">
+                {% for word in decrypted_password.split() %}
+                    <span class="word" style="cursor: pointer;">{{ word }}</span>
+                {% endfor %}
+            </p>
+        </div>
+        {% endif %}
+        <div id="emptyBox" class="empty-box"></div>
     </div>
-    {% if decrypted_password %}
-    <div class="card-panel teal lighten-4 white-text">
-        <h4>Message déchiffré :</h4>
-        <p>{{ decrypted_password }}</p>
-    </div>
-    {% endif %}
-</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Document loaded');
+        const words = document.querySelectorAll('#decryptedText .word');
+        console.log('Words found:', words);
+
+        words.forEach(word => {
+            console.log('Adding event listener to:', word.innerText);
+            word.addEventListener('click', function(event) {
+                console.log('Word clicked:', event.target.innerText);
+                
+                const rect = event.target.getBoundingClientRect();
+                const emptyBox = document.getElementById('emptyBox');
+                
+                emptyBox.style.top = `${rect.bottom + window.scrollY}px`;
+                emptyBox.style.left = `${rect.left + window.scrollX}px`;
+                emptyBox.style.display = 'block';
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            const emptyBox = document.getElementById('emptyBox');
+            if (!emptyBox.contains(event.target) && !event.target.classList.contains('word')) {
+                emptyBox.style.display = 'none';
+            }
+        });
+    });
+    </script>
+</body>
+</html>
 {% endblock %}

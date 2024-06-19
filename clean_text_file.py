@@ -21,9 +21,8 @@ def clean_text(text):
     return text.strip()  # Supprime les espaces de début et de fin
 
 def main():
-    input_path = r"C:\Users\pc\appi\Projet_d-application-\text.txt"
-    output_path = r"C:\Users\pc\appi\Projet_d-application-\text_cleaned.txt"
-    
+    input_path = r"C:\Users\pc\appli\Projet_d-application-\text.txt"
+    output_path = r"C:\Users\pc\appli\Projet_d-application-\text_cleaned.txt"
     if not os.path.exists(input_path):
         print(f"Erreur: Le fichier d'entrée '{input_path}' n'existe pas.")
         return
