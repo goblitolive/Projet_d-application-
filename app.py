@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 import random
 from collections import Counter
 
@@ -60,16 +60,6 @@ def dechiffrer(ciphertext, known_frequency):
 
     return decrypted_text
 
-def generate_suggestions(word):
-    if word:
-        suggestions = [
-            word.replace('f', 'i'), 
-            word.replace('f', 'e'), 
-            word.replace('f', 'o')
-        ]
-        return suggestions
-    return []
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -89,17 +79,6 @@ def decrypt():
         decrypted_password = dechiffrer(hashed_password, french_freq)
         return render_template('decrypt.html', decrypted_password=decrypted_password)
     return render_template('decrypt.html')
-
-@app.route('/suggestions', methods=['POST'])
-def suggestions():
-    print('Suggestions endpoint hit')  # Print to verify the endpoint is hit
-    data = request.get_json()
-    print('Data received:', data)  # Print the data received
-    word = data.get('word')
-    suggestions = generate_suggestions(word)
-    print('Suggestions generated for word "{}": {}'.format(word, suggestions))  # Print the suggestions for debugging
-    return jsonify(suggestions)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
