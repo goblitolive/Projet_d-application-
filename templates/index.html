@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="background-container">
+    <img src="{{ url_for('static', filename='image.png') }}" alt="Hacking Background" class="background-image">
+</div>
+<div class="background-overlay"></div>
 <div class="section">
     <h1 class="center-align white-text">Bienvenue sur l'application de Chiffrement</h1>
-    <div class="center-align">
+    <div class="button-container">
         <a href="/encrypt" class="btn waves-effect waves-light">Chiffrement</a>
         <a href="/decrypt" class="btn waves-effect waves-light">Déchiffrement</a>
     </div>

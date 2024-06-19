@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="section">
-    <h1 class="center-align">Chiffrement de Mot de Passe</h1>
+    <h1 class="center-align">Chiffrement de Message</h1>
     <div class="row">
         <form class="col s12" method="post">
             <div class="row">
                 <div class="input-field col s12">
                     <input id="password" type="text" class="validate" name="password" required>
-                    <label for="password">Mot de passe</label>
+                    <label for="password">Message</label>
                 </div>
             </div>
             <button type="submit" class="btn waves-effect waves-light">Chiffrer</button>
@@ -16,13 +16,13 @@
     </div>
     {% if hashed_password %}
     <div class="card-panel teal lighten-4">
-        <h4>Mot de passe chiffré :</h4>
+        <h4>Message chiffré :</h4>
         <p>{{ hashed_password }}</p>
     </div>
-    <div class="card-panel teal lighten-4">
+    <!-- <div class="card-panel teal lighten-4">
         <h4>Fréquences des caractères :</h4>
         <p>{{ frequency }}</p>
-    </div>
+    </div> -->
     <div class="card-panel teal lighten-4">
         <h4>Clé de chiffrement :</h4>
         <p>{{ substitution_key }}</p>

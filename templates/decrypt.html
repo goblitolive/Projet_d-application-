@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="section">
-    <h1 class="center-align white-text">Déchiffrement de Mot de Passe</h1>
+    <h1 class="center-align white-text">Déchiffrement de Message</h1>
     <div class="row">
         <form class="col s12" method="post">
             <div class="row">
                 <div class="input-field col s12">
                     <input id="hashed_password" type="text" class="validate" name="hashed_password" required>
-                    <label for="hashed_password">Mot de passe chiffré</label>
+                    <label for="hashed_password">Message chiffré</label>
                 </div>
             </div>
             <button type="submit" class="btn waves-effect waves-light">Déchiffrer</button>
@@ -16,7 +16,7 @@
     </div>
     {% if decrypted_password %}
     <div class="card-panel teal lighten-4 white-text">
-        <h4>Mot de passe déchiffré :</h4>
+        <h4>Message déchiffré :</h4>
         <p>{{ decrypted_password }}</p>
     </div>
     {% endif %}
