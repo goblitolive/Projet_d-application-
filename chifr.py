@@ -6,3 +6,4 @@ def chiffrer_avec_cle(text, key):
         else:
             encrypted_text.append(char)
     return ''.join(encrypted_text)
+
