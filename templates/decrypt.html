@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Déchiffrement de Message</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
     <style>
         .empty-box {
             display: none;
@@ -40,9 +40,12 @@
             <h4>Message déchiffré :</h4>
             <p id="decryptedText">
                 {% for word in decrypted_password.split() %}
-                    <span class="word" style="cursor: pointer;" onclick="showOptions('{{ word }}')">{{ word }}</span>
+                    <span class="word" style="cursor: pointer;" onclick="showOptions('{{ word }}')" data-word="{{ word }}">{{ word }}</span>
                 {% endfor %}
             </p>
+            <h4>Clé de chiffrement :</h4>
+            <p id="decryptionKey">{{ decryption_key }}</p>
+            <input type="hidden" id="originalText" value="{{ decrypted_password }}">
         </div>
         {% endif %}
         <div id="emptyBox" class="empty-box"></div>
@@ -82,13 +85,51 @@
             data.options.forEach(option => {
                 const div = document.createElement('div');
                 div.textContent = option;
+                div.classList.add('option');
+                div.addEventListener('click', () => applyDecryption(option, word));
                 emptyBox.appendChild(div);
             });
 
-            const rect = document.querySelector(`#decryptedText .word:first-child`).getBoundingClientRect();
-            emptyBox.style.top = `${rect.bottom + window.scrollY}px`;
-            emptyBox.style.left = `${rect.left + window.scrollX}px`;
-            emptyBox.style.display = 'block';
+            const clickedWord = document.querySelector(`#decryptedText .word[data-word="${word}"]`);
+            if (clickedWord) {
+                const rect = clickedWord.getBoundingClientRect();
+                emptyBox.style.top = `${rect.bottom + window.scrollY}px`; // Position en dessous du mot cliqué
+                emptyBox.style.left = `${rect.left + window.scrollX}px`;
+                emptyBox.style.display = 'block';
+            }
+        });
+    }
+
+    function applyDecryption(selectedWord, originalWord) {
+        const originalText = document.getElementById('originalText').value;
+        fetch('/apply_decryption', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ selectedWord: selectedWord, originalWord: originalWord, originalText: originalText }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const decryptedTextElement = document.getElementById('decryptedText');
+            decryptedTextElement.innerHTML = ''; // Clear previous text
+
+            data.decrypted_password.split(' ').forEach(word => {
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.classList.add('word');
+                span.style.cursor = 'pointer';
+                span.dataset.word = word;
+                span.onclick = () => showOptions(word);
+                decryptedTextElement.appendChild(span);
+                decryptedTextElement.appendChild(document.createTextNode(' '));
+            });
+
+            const decryptionKeyElement = document.getElementById('decryptionKey');
+            decryptionKeyElement.textContent = data.decryption_key;
+
+            // Mettre à jour le texte original caché avec le nouveau texte déchiffré
+            document.getElementById('originalText').value = data.decrypted_password;
         });
     }
     </script>
