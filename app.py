@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 import random
 from collections import Counter
-from decrypt import decrypt_text, generate_possible_mappings, known_words,known_bigrams,known_trigrams
+from decrypt import decrypt_text, generate_possible_mappings, known_words, known_bigrams, known_trigrams
 from chifr import chiffrer_avec_cle  # Importer la fonction chiffrer_avec_cle depuis chifr
 
 app = Flask(__name__)
@@ -75,7 +75,7 @@ def get_options():
     data = request.get_json()
     word = data['word']
     
-    possible_mappings = generate_possible_mappings(word, french_freq, known_words,known_bigrams,known_trigrams,top_n=4)
+    possible_mappings = generate_possible_mappings(word, french_freq, known_words, known_bigrams, known_trigrams, top_n=4)
     options = []
     for char_map in possible_mappings:
         decrypted_text = ''.join(char_map.get(char, char) for char in word)
@@ -113,8 +113,9 @@ def apply_decryption():
                 updated_key[o_char] = s_char
 
     updated_key = {k: v for k, v in updated_key.items() if k != v}
-    print(current_key)
-    print(last_decrypted_text)
+    print(f"Updated key passed to parameter: {updated_key}")
+    print(f"Current key being used: {current_key}")
+
     decrypted_password = chiffrer_avec_cle(last_decrypted_text, updated_key)
     last_decrypted_text = decrypted_password
 
